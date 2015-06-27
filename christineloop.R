@@ -1,5 +1,6 @@
 remove(list=ls())
 
+require(sqldf)
 require(ggplot2)
 require(dplyr)
 
@@ -12,7 +13,7 @@ for(i in unique(dat$name_status)){
 
   dat2$name_status[index]=i
 
-  tmp=round(sd(abs(dat$bride_age[dat$name_status==i]-dat$groom_age[dat$name_status==i]), na.rm=T))
+  tmp=round(mean(abs(dat$bride_age[dat$name_status==i]-dat$groom_age[dat$name_status==i]), na.rm=T))
 
   dat2$age_diff[index]=tmp
 
@@ -29,7 +30,7 @@ for(i in unique(dat$name_status)){
 
   .dat=data.frame(name_status=i, stringsAsFactors = FALSE)
 
-  tmp=round(sd(abs(dat$bride_age[dat$name_status==i]-dat$groom_age[dat$name_status==i]), na.rm=T))
+  tmp=round(mean(abs(dat$bride_age[dat$name_status==i]-dat$groom_age[dat$name_status==i]), na.rm=T))
 
   .dat$age_diff=tmp
 
@@ -48,7 +49,7 @@ for(i in unique(dat$name_status)){
 
   dat2[[i]]=data.frame(name_status=i, stringsAsFactors = FALSE)
 
-  tmp=round(sd(abs(dat$bride_age[dat$name_status==i]-dat$groom_age[dat$name_status==i]), na.rm=T))
+  tmp=round(mean(abs(dat$bride_age[dat$name_status==i]-dat$groom_age[dat$name_status==i]), na.rm=T))
 
   dat2[[i]]$age_diff=tmp
 
@@ -57,7 +58,8 @@ for(i in unique(dat$name_status)){
   message(i)
 
 }
-
 dat2=data.frame(bind_rows(dat2))
+
+dat2=sqldf("select count(*) as n ,round(avg(abs(bride_age-groom_age))) as age_diff,name_status from dat group by 3 order by 1")
 
 ggplot(dat2,aes(name_status, age_diff, size=n)) + geom_point()
