@@ -1,5 +1,7 @@
 remove(list=ls())
 
+###seeing if i can commit from the command line
+
 require(sqldf)
 require(ggplot2)
 require(dplyr)
